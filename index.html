@@ -53,6 +53,14 @@
             transition: .15s;
         }
 
+        .toggle-fullscreen-btn:not(.on) .icon-fullscreen-leave {
+            display: none;
+        }
+
+        .toggle-fullscreen-btn.on .icon-fullscreen-enter {
+            display: none;
+        }
+
         .fullscreen-mode {
             position: fixed;
             top: 0;
@@ -72,9 +80,20 @@
 <body>
     <div class="fullscreen-container">
         <iframe id="iv_iframe" src="https://rebelrooster.io/vg/nurnberg" allow="autoplay" allowfullscreen></iframe>
-        <button class="toggle-fullscreen-btn" aria-label="Toggle fullscreen mode">
+        <button class="toggle-fullscreen-btn" aria-label="Enter fullscreen mode">
             <svg class="toggle-fullscreen-svg" width="32" height="32" viewBox="-2 -2 28 28">
-                <path d="M 2 9 v -7 h 7 M 22 9 v -7 h -7 M 22 15 v 7 h -7 M 2 15 v 7 h 7" />
+                <g class="icon-fullscreen-enter">
+                    <path d="M 2 9 v -7 h 7" />
+                    <path d="M 22 9 v -7 h -7" />
+                    <path d="M 22 15 v 7 h -7" />
+                    <path d="M 2 15 v 7 h 7" />
+                </g>
+                <g class="icon-fullscreen-leave">
+                    <path d="M 24 17 h -7 v 7" />
+                    <path d="M 0 17 h 7 v 7" />
+                    <path d="M 0 7 h 7 v -7" />
+                    <path d="M 24 7 h -7 v -7" />
+                </g>
             </svg>
         </button>
     </div>
@@ -88,6 +107,7 @@
         function toggleFullscreen() {
             if (container.classList.contains('fullscreen-mode')) {
                 container.classList.remove('fullscreen-mode');
+                toggleBtn.classList.remove('on');
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitExitFullscreen) {
@@ -95,12 +115,14 @@
                 }
             } else {
                 container.classList.add('fullscreen-mode');
+                toggleBtn.classList.add('on');
                 if (container.requestFullscreen) {
                     container.requestFullscreen();
                 } else if (container.webkitRequestFullscreen) {
                     container.webkitRequestFullscreen();
                 }
             }
+            updateButtonState();
         }
 
         document.addEventListener('fullscreenchange', updateButtonState);
