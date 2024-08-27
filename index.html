@@ -7,16 +7,16 @@
 
     <style>
         .toggle-fullscreen-btn {
-        position: fixed;
-        z-index: 10000;
-        top: 10px;
-        right: 10px;
-        border: 0;
-        padding: 0;
-        background: none;
-        cursor: pointer;
-        outline: none;
-        padding:20px;
+            position: fixed;
+            z-index: 10000;
+            top: 10px;
+            right: 10px;
+            border: 0;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+            outline: none;
+            padding: 20px;
         }
 
         .toggle-fullscreen-svg {
@@ -32,7 +32,6 @@
             stroke-width: 4;
             transition: .15s;
         }
-
 
         .toggle-fullscreen-btn:hover path:nth-child(1),
         .toggle-fullscreen-btn:focus path:nth-child(1) {
@@ -53,7 +52,6 @@
         .toggle-fullscreen-btn:focus path:nth-child(4) {
             transform: translate(-2px, 2px);
         }
-
 
         .toggle-fullscreen-btn:not(.on) .icon-fullscreen-leave {
             display: none;
@@ -85,31 +83,22 @@
             </svg>
         </button>
     </div>
-    <div>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione nemo fugiat officia possimus illo ipsa quasi repellat, aliquam eum, qui, repudiandae ullam. Aliquam, molestiae saepe. Accusantium libero sunt corporis illo.
-    </div>
-    <div>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione nemo fugiat officia possimus illo ipsa quasi repellat, aliquam eum, qui, repudiandae ullam. Aliquam, molestiae saepe. Accusantium libero sunt corporis illo.
-    </div>
-    <div>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione nemo fugiat officia possimus illo ipsa quasi repellat, aliquam eum, qui, repudiandae ullam. Aliquam, molestiae saepe. Accusantium libero sunt corporis illo.
-    </div>
-    <div>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione nemo fugiat officia possimus illo ipsa quasi repellat, aliquam eum, qui, repudiandae ullam. Aliquam, molestiae saepe. Accusantium libero sunt corporis illo.
-    </div>
 </body>
 <script>
-	const toggleBtn = document.querySelector('.js-toggle-fullscreen-btn');
+    const toggleBtn = document.querySelector('.js-toggle-fullscreen-btn');
     const elem = document.querySelector('.fullscreen-elem');
 
-    toggleBtn.addEventListener('click', function() {
+    // Add both click and touchstart event listeners for better mobile support
+    toggleBtn.addEventListener('click', toggleFullscreen);
+    toggleBtn.addEventListener('touchstart', toggleFullscreen);
+
+    function toggleFullscreen() {
         if (document.fullscreenElement || document.webkitFullscreenElement) {
             document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen();
         } else {
             elem.requestFullscreen ? elem.requestFullscreen() : elem.webkitRequestFullscreen();
-            elem.classList.add('fullscreen-active');
         }
-    });
+    }
 
     document.addEventListener('fullscreenchange', handleFullscreen);
     document.addEventListener('webkitfullscreenchange', handleFullscreen);
