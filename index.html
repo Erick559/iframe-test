@@ -108,8 +108,10 @@
 
         function updateButtonState() {
             if (document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('fullscreen-mode')) {
+                toggleBtn.classList.add('on');
                 toggleBtn.setAttribute('aria-label', 'Exit fullscreen mode');
             } else {
+                toggleBtn.classList.remove('on');
                 toggleBtn.setAttribute('aria-label', 'Enter fullscreen mode');
             }
         }
