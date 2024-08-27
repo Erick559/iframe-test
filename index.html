@@ -6,17 +6,39 @@
     <title>Document</title>
 
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .fullscreen-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fullscreen-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
         .toggle-fullscreen-btn {
             position: fixed;
             z-index: 10000;
             top: 10px;
             right: 10px;
             border: 0;
-            padding: 0;
+            padding: 20px;
             background: none;
             cursor: pointer;
             outline: none;
-            padding: 20px;
         }
 
         .toggle-fullscreen-svg {
@@ -25,43 +47,13 @@
         }
 
         .toggle-fullscreen-svg path {
-            transform-box: view-box;
-            transform-origin: 12px 12px;
             fill: none;
             stroke: hsl(225, 10%, 8%);
             stroke-width: 4;
             transition: .15s;
         }
 
-        .toggle-fullscreen-btn:hover path:nth-child(1),
-        .toggle-fullscreen-btn:focus path:nth-child(1) {
-            transform: translate(-2px, -2px);
-        }
-
-        .toggle-fullscreen-btn:hover path:nth-child(2),
-        .toggle-fullscreen-btn:focus path:nth-child(2) {
-            transform: translate(2px, -2px);
-        }
-
-        .toggle-fullscreen-btn:hover path:nth-child(3),
-        .toggle-fullscreen-btn:focus path:nth-child(3) {
-            transform: translate(2px, 2px);
-        }
-
-        .toggle-fullscreen-btn:hover path:nth-child(4),
-        .toggle-fullscreen-btn:focus path:nth-child(4) {
-            transform: translate(-2px, 2px);
-        }
-
-        .toggle-fullscreen-btn:not(.on) .icon-fullscreen-leave {
-            display: none;
-        }
-
-        .toggle-fullscreen-btn.on .icon-fullscreen-enter {
-            display: none;
-        }
-
-        .ios-fullscreen {
+        .fullscreen-mode {
             position: fixed;
             top: 0;
             left: 0;
@@ -71,93 +63,56 @@
             background-color: #000;
         }
 
-        .ios-fullscreen iframe {
+        .fullscreen-mode iframe {
             width: 100%;
             height: 100%;
-            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="fullscreen-elem" style="width:100%;position:relative;padding-top:56.2%;">
-        <iframe id="iv_iframe" src="https://rebelrooster.io/vg/nurnberg" marginheight="0" marginwidth="0" style="border:0;width:100%;height:100%;position:absolute;top:0px;bottom:0px;right:0px;left:0px;" allow="autoplay" allowfullscreen frameborder='0'>
-        </iframe>
-        <button class="js-toggle-fullscreen-btn toggle-fullscreen-btn" aria-label="Enter fullscreen mode">
+    <div class="fullscreen-container">
+        <iframe id="iv_iframe" src="https://rebelrooster.io/vg/nurnberg" allow="autoplay" allowfullscreen></iframe>
+        <button class="toggle-fullscreen-btn" aria-label="Toggle fullscreen mode">
             <svg class="toggle-fullscreen-svg" width="32" height="32" viewBox="-2 -2 28 28">
-                <g class="icon-fullscreen-enter">
-                    <path d="M 2 9 v -7 h 7" />
-                    <path d="M 22 9 v -7 h -7" />
-                    <path d="M 22 15 v 7 h -7" />
-                    <path d="M 2 15 v 7 h 7" />
-                </g>
-
-                <g class="icon-fullscreen-leave">
-                    <path d="M 24 17 h -7 v 7" />
-                    <path d="M 0 17 h 7 v 7" />
-                    <path d="M 0 7 h 7 v -7" />
-                    <path d="M 24 7 h -7 v -7" />
-                </g>
+                <path d="M 2 9 v -7 h 7 M 22 9 v -7 h -7 M 22 15 v 7 h -7 M 2 15 v 7 h 7" />
             </svg>
         </button>
     </div>
-</body>
-<script>
-    const toggleBtn = document.querySelector('.js-toggle-fullscreen-btn');
-    const elem = document.querySelector('.fullscreen-elem');
 
-    // Function to detect iOS
-    function isIOS() {
-        return [
-            'iPad Simulator',
-            'iPhone Simulator',
-            'iPod Simulator',
-            'iPad',
-            'iPhone',
-            'iPod'
-        ].includes(navigator.platform)
-        // iPad on iOS 13 detection
-        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-    }
+    <script>
+        const container = document.querySelector('.fullscreen-container');
+        const toggleBtn = document.querySelector('.toggle-fullscreen-btn');
 
-    // Add both click and touchstart event listeners for better mobile support
-    toggleBtn.addEventListener('click', toggleFullscreen);
-    toggleBtn.addEventListener('touchstart', toggleFullscreen);
+        toggleBtn.addEventListener('click', toggleFullscreen);
 
-    function toggleFullscreen() {
-        if (isIOS()) {
-            toggleIOSFullscreen();
-        } else {
-            if (document.fullscreenElement || document.webkitFullscreenElement) {
-                document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen();
+        function toggleFullscreen() {
+            if (container.classList.contains('fullscreen-mode')) {
+                container.classList.remove('fullscreen-mode');
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
             } else {
-                elem.requestFullscreen ? elem.requestFullscreen() : elem.webkitRequestFullscreen();
+                container.classList.add('fullscreen-mode');
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                }
             }
         }
-    }
 
-    function toggleIOSFullscreen() {
-        if (elem.classList.contains('ios-fullscreen')) {
-            elem.classList.remove('ios-fullscreen');
-            toggleBtn.classList.remove('on');
-            toggleBtn.setAttribute('aria-label', 'Enter fullscreen mode');
-        } else {
-            elem.classList.add('ios-fullscreen');
-            toggleBtn.classList.add('on');
-            toggleBtn.setAttribute('aria-label', 'Exit fullscreen mode');
+        document.addEventListener('fullscreenchange', updateButtonState);
+        document.addEventListener('webkitfullscreenchange', updateButtonState);
+
+        function updateButtonState() {
+            if (document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('fullscreen-mode')) {
+                toggleBtn.setAttribute('aria-label', 'Exit fullscreen mode');
+            } else {
+                toggleBtn.setAttribute('aria-label', 'Enter fullscreen mode');
+            }
         }
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreen);
-    document.addEventListener('webkitfullscreenchange', handleFullscreen);
-
-    function handleFullscreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            toggleBtn.classList.add('on');
-            toggleBtn.setAttribute('aria-label', 'Exit fullscreen mode');
-        } else {
-            toggleBtn.classList.remove('on');
-            toggleBtn.setAttribute('aria-label', 'Enter fullscreen mode');
-        }
-    }
-</script>
+    </script>
+</body>
 </html>
